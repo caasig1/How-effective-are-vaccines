@@ -1,0 +1,220 @@
+---
+title: "How effective are vaccinations?"
+subtitle: "A study comparing vaccination rate to mortality rate"
+author: "Isaac Ng"
+thanks: "Code and data are available at: https://github.com/caasig1/How-effective-are-vaccines."
+date: "`r format(Sys.time(), '%d %B %Y')`"
+abstract: "Revisiting the topic of vaccine efficacy with a focus on finding any relationship between being fully-immunized and the respective mortality rates shows how easy it is to find relevant data and convince ourselves of how effective they are. In this paper, I gather data from DHS Program's survey conducted in Ghana. The survey was converted from its original pdf state into tables and an obvious relationship was found between vaccination rates and mortality rates. Many people have formed their own beliefs that vaccines do not work so, these findings work to motivate the general population to do their own research that would convince themselves of certain facts. \\par \\textbf {Keywords:} vaccines, vaccination, mortality"
+output:
+  bookdown::pdf_document2
+toc: TRUE
+bibliography: references.bib
+header-includes:
+  \usepackage{floatrow}
+  \floatplacement{figure}{H}
+  \floatplacement{table}{H}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+library(tidyverse)
+library(kableExtra)
+library(ggpubr)
+library(bookdown)
+library(here)
+library(float)
+
+
+# Set NA's in tables to blank
+options(knitr.kable.NA = '')
+```
+
+\newpage
+
+# Introduction
+
+Science has evolved through humanity and has tackled many of humanities greatest necessities, ranging from transportation, to convenience, health, any practically every facet of our lives today. When it comes to health, many of nature's deadliest diseases have taken out hordes of Earth's population in the past. Through science, various medications have arisen to combat different illnesses. One of which, are vaccines. According to the WHO, a simple way to define vaccination is that it is a simple, safe, and effective way of protecting you against harmful diseases, before you come into contact with them. It uses your body’s natural defenses to build resistance to specific infections and makes your immune system stronger. Vaccines work by helping your body's natural defenses build up protection by recognizing the germ, producing antibodies to fight them, and remembering the disease and how to fight it. [@vacs] The efficacy of vaccines has been scientifically proven and cover a multitude of diseases, including the recent COVID-19, Malaria, Measles, Typhoid, and many more. While vaccines have been proven time and again to be effective in tackling these diseases, many who are stubborn refuse to believe so, citing unreliable sources from the internet.
+
+This paper focuses on the relationship between vaccination rates and mortality rates in children in Ghana from 1998. In order to provide another perspective on the efficacy of vaccinations, this paper does not delve into the science behind vaccinations but rather looks at the numbers to see if there is any relationship between mortality rates and vaccination rates. In order to fully examine the relationship of these two rates, Ghana was selected since it is a third world country. When traveling to Ghana in 2022, many vaccines are recommended to travelers to cover 11 different diseases. [@travel] Being in such a country, those with weaker immune systems (especially children) are more likely to catch these diseases; not being vaccinated could lead to severe or deadly consequences.
+
+In the following sections, I first discuss the Data \@ref(data) used in this paper. I will start by discussing the various resources used in this paper. Then I discuss where the data was gathered from and how the data was collected. Closing the section, I will show the table portions of the pdf that were used alongside my recreations of them. In the following section, I discuss the Results \@ref(results) found from this data. I provide graphs including correlation between vaccination rates and certain mortality rates. I summarize those results from those graphs as well as those gathered directly from the tables. The Discussion \@ref(discussion) section concludes the paper, providing insight on any implications drawn from the data, what should be done in light of what is shown, and possible next steps to further the findings.
+
+# Data
+
+## Data Source
+
+For this paper, data is analyzed using R, a programming language for statistical computing and graphics [@citeR]. The package tidyverse is used to help manipulate the data [@tidyverse]. The package pdftools [@pdftools] is used to help read the pdf. Since we use R projects to manage our data, we use here [@here] to reference file locations. bookdown [@bookdown] is used for the formatting of the project. In order to keep tables and figures in place, package float [@float] is used. To include a nicely formatted table, kable and kableExtra [@kable] is used. To help structure some plots, ggpubr [@ggpubr]  is used. The data used in this paper was gathered by The Demographic and Health Surveys Program and can be found on their website [@DHS].
+
+## Data Collection
+
+The data found in (cite here) comes from a survey that was conducted throughout Ghana in 1998. The survey was designed so that 4,500 between the ages of 15 and 49 were interviewed. In addition, males between the age of 15 and 59 were selected so that every third household was interviewed, totalling to 1,500 men. Taking into account the possibility of a non-response, a total of 6,375 households across the nation were surveyed. Of the 6,375 households selected, 6,055 were occupied and 6,003 were actually interviewed. This resulted in a total of 4,790 eligible women and 1,596 eligible men underwent individual interviews. 97 percent of both genders successfully completed their interviews. For those who did not complete their interviews, the main reason was that the interviewers failed to find them despite repeated callbacks.
+
+## Dataset
+
+The data can be found on the DHS website in PDF format as mentioned previously. Below are the pdf versions of each table used followed by a replica of each table in full. \@ref(fig:pdfVac) and \@ref(tab:fullVac) are the pdf and replica of the table containing data on vaccinations in Ghana. \@ref(fig:pdfMort) and \@ref(tab:fullMort) are the pdf and replica of the table containing data on child mortality in Ghana
+
+```{r pdfVac, warning=FALSE, echo=FALSE, fig.align="center", fig.cap="Vaccination Table in the DHS Report", out.width="60%"}
+include_graphics(here::here("outputs/vaccination_table.png"))
+```
+
+```{r fullVac, warning=FALSE, echo=FALSE}
+full_vaccinations_table <-  read_csv(here::here("inputs/data/cleaned_full_vac_data.csv"), show_col_types = FALSE)
+full_vaccinations_table <- full_vaccinations_table |>
+  subset(select = -c(raw_text, Data, page_number))
+colnames(full_vaccinations_table)[14] <- "Vaccination Card"
+colnames(full_vaccinations_table)[15] <- "Vitamin A"
+full_vaccinations_table <- full_vaccinations_table[-c(19,27),]
+kable(full_vaccinations_table, caption = "Vaccination records for Ghanaian children (values are percentages)", booktabs = TRUE) |>
+kable_styling(latex_options = c("striped", "scale_down"))
+```
+
+```{r pdfMort, warning=FALSE, echo=FALSE, fig.align="center", fig.cap="Mortality Table in the DHS Report", out.width="60%"}
+include_graphics(here::here("outputs/mortality_table.png"))
+```
+
+```{r fullMort, warning=FALSE, echo=FALSE}
+mortality <- read_csv(here::here("inputs/data/cleaned_full_mort_data.csv"), show_col_types = FALSE)
+mortality <- mortality|>
+  subset(select = -c(raw_text, Tab, Data, page_number))
+kable(mortality, caption = "Mortality records for Ghanaian children (values are per 1000 live births)", booktabs = TRUE) |>
+kable_styling(latex_options = c("striped", "scale_down"))
+```
+
+The data used in the paper will focus on 9 of the 10 regions being sampled. The reason Brong Ahafo is left out is due to the note about its data left under both tables. They were measured based on a significantly fewer number of people. So, in order to keep the table as consistent and as accurate as possible, this region has been left out of the final dataset. After cleaning the dataset and keeping only what we will be using, here are the tables alongside relevant their relevant graphs. It was made clear in the DHS report that the mortality values present are defined as follows. Neonatal mortality is the probability of dying within the first month of life. Post neonatal mortality is the difference between infant and neonatal mortality. Infant mortality is the probability of dying between birth and the first birthday. Child mortality is the probability of dying between exact age one and the fifth birthday. Under-five mortality is the probability of dying between birth and the fifth birthday. All rates are expressed per 1,000 live births, exccept for child mortality, which is expressed as deaths per 1,000 children surviving to exact age one.
+
+```{r graphVac, warning=FALSE, echo=FALSE, fig.align='center', fig.cap="Graph of Vaccination Rates in Ghanaian Regions", out.width="70%"}
+vac <- read_csv(here::here("inputs/data/cleaned_vac_data.csv"), show_col_types = FALSE)
+vac <- vac[,c(1,2,4,3)]
+vac_regions <- unlist(vac[rep(seq_len(nrow(vac)), each = 3), 1])
+vac_rate <- rep(c("Fully-immunized", "Semi-immunized", "None"), 10)
+
+vac_values <- unlist(unname(vac[1,2:4])) |>
+  append(unlist(unname(vac[2,2:4]))) |>
+  append(unlist(unname(vac[3,2:4]))) |>
+  append(unlist(unname(vac[4,2:4]))) |>
+  append(unlist(unname(vac[5,2:4]))) |>
+  append(unlist(unname(vac[6,2:4]))) |>
+  append(unlist(unname(vac[7,2:4]))) |>
+  append(unlist(unname(vac[8,2:4]))) |>
+  append(unlist(unname(vac[9,2:4]))) |>
+  append(unlist(unname(vac[10,2:4])))
+
+vac_final <- data.frame(vac_regions, vac_rate, vac_values)
+
+vac_final |>
+  ggplot(aes(fill=vac_rate, y=vac_values, x=vac_regions)) + 
+    geom_bar(position="stack", stat="identity") + 
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
+    xlab("Regions") + ylab("Percentages") + labs(fill = 'Vaccination Status')
+
+```
+
+```{r tableVac, warning=FALSE, echo=FALSE, fig.align='center', out.width="70%"}
+clean_vac <- read_csv(here::here("inputs/data/cleaned_vac_data.csv"), show_col_types = FALSE)
+clean_vac <- clean_vac[c(1,2,4,3)]
+kable(clean_vac, booktabs = TRUE, caption = "Table of Vaccination Rates in Ghanaian Regions") |>
+kable_styling(latex_options = c("striped", "scale_down"))
+```
+
+```{r graphMort, warning=FALSE, echo=FALSE,  fig.align='center', fig.cap="Graph of Mortality Rates in Ghanaian Regions", out.width="70%"}
+mort <- read_csv(here::here("inputs/data/cleaned_mort_data.csv"), show_col_types = FALSE)
+
+mort_regions <- unlist(vac[rep(seq_len(nrow(vac)), each = 5), 1])
+mort_groups <- rep(colnames(mort)[2:6], 10)
+
+mort_values <- unlist(unname(mort[1,2:6])) |>
+  append(unlist(unname(mort[2,2:6]))) |>
+  append(unlist(unname(mort[3,2:6]))) |>
+  append(unlist(unname(mort[4,2:6]))) |>
+  append(unlist(unname(mort[5,2:6]))) |>
+  append(unlist(unname(mort[6,2:6]))) |>
+  append(unlist(unname(mort[7,2:6]))) |>
+  append(unlist(unname(mort[8,2:6]))) |>
+  append(unlist(unname(mort[9,2:6]))) |>
+  append(unlist(unname(mort[10,2:6])))
+
+mort_final <- data.frame(mort_regions, mort_groups, mort_values)
+
+mort_final |>
+  ggplot(aes(fill=mort_groups, y=mort_values, x=mort_regions)) + 
+    geom_bar(position="dodge", stat="identity") +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+  
+```{r tableMort, warning=FALSE, echo=FALSE, fig.align='center', out.width="70%"}
+clean_mortality <- read_csv(here::here("inputs/data/cleaned_mort_data.csv"), show_col_types = FALSE)
+kable(clean_mortality, booktabs = TRUE, caption = "Table of Mortality Rates in Ghanaian Regions") |>
+kable_styling(latex_options = c("striped", "scale_down"))
+```
+
+# Results
+
+Using the data from above, I plot graphs depicting the correlation between being Fully Immunized and each type of Mortality apart from post neonatal mortality.
+
+```{r plots, echo=FALSE, warning=FALSE, message=FALSE, fig.align="center", fig.cap="caption here", out.width="80%"}
+combined <- data.frame(vac, mort[c(2,3,4,5,6)])
+colnames(combined) <- c("Region", "Fully Immunized", "Semi Immunized", "None", "Neonatal mortality", "Postneonatal mortality", "Infant mortality", "Child mortality", "Under 5 mortality")
+
+child_plot <-
+  ggscatter(combined, y = "Fully Immunized", x = "Child mortality", 
+          add = "reg.line", conf.int = TRUE, 
+          cor.coef = F, cor.method = "pearson",
+          xlab = "Fully Immunized", ylab = "Child mortality", title = "Child Mortality vs Immunization Rate")
+
+pnn_plot <-
+  ggscatter(combined, y = "Fully Immunized", x = "Postneonatal mortality", 
+          add = "reg.line", conf.int = TRUE, 
+          cor.coef = F, cor.method = "pearson",
+          xlab = "Fully Immunized", ylab = "Postneonatal mortality", title = "Postneonatal mortality vs Immunization Rate")
+
+u5_plot <-
+  ggscatter(combined, y = "Fully Immunized", x = "Under 5 mortality", 
+          add = "reg.line", conf.int = TRUE, 
+          cor.coef = F, cor.method = "pearson",
+          xlab = "Fully Immunized", ylab = "Under 5 mortality", title = "Under 5 mortality vs Immunization Rate")
+
+infant_plot <-
+  ggscatter(combined, y = "Fully Immunized", x = "Infant mortality", 
+          add = "reg.line", conf.int = TRUE, 
+          cor.coef = F, cor.method = "pearson",
+          xlab = "Fully Immunized", ylab = "Infant mortality", title = "Infant mortality vs Immunization Rate")
+
+neo_plot <-
+  ggscatter(combined, y = "Fully Immunized", x = "Neonatal mortality", 
+          add = "reg.line", conf.int = TRUE, 
+          cor.coef = F, cor.method = "pearson",
+          xlab = "Fully Immunized", ylab = "Neonatal mortality", title = "Neonatal mortality vs Immunization Rate")
+
+ggarrange(neo_plot, pnn_plot, infant_plot, child_plot, u5_plot)
+```
+
+From the initial graphs and tables, we see that a majority of Ghana's population are Fully Immunized with a minority of people having received no vaccines. When it comes to vaccinations, regions that stand out are the Greater Accra and the Upper East, both having only 1 percent of their population having not received vaccines. The Northern, Central, and Eastern all have relatively low rates of people being fully immunized. Looking at mortality, Norther, Upper East, and Upper West have significant higher mortality rates per 1,000 children, especially when it comes to under-five mortality. Greater Accra has a noticeably lower mortality rate than other regions.
+
+Focusing on the graphs above, there is a negative relationship between being fully immunized and mortality; when the rate of fully immunized people increase, the rates of mortality decrease. While they all have a downward trend, Child Mortality and Under 5 Mortality seem to have a more definitive trend, with their points nearer to the model.
+
+# Discussion
+
+## Observing the data
+
+From the graphs \@ref(fig:plots), we notice that some of the plots have a higher correlation than others. All that can be interpreted is that there is definitely a negative relationship, albeit not a strong one. Generally, a high mortality rate also has a lower immunization rate. However, since the relationship is not strong, one must question why this is so, possibly even questioning the validity of vaccines. It is important to understand that mortality can also occur for many reasons, only some of which can be attributed to diseases easily prevented through vaccines. Violence and crime, natural disasters, or even something as simple as accidents could also lead to death.
+
+Let us focus on the plot for neonatal mortality compared to vaccination rate. There is basically no relationship between the two. However, this is understandable as neonatal mortality is mortality of children between birth and their first month of living. Most fatalities are likely not the cause of disease or having a lack of vaccination, rather complications during birth. On the other hand, child mortality and under five mortality seem to have a stronger relationship with being vaccinated. Since children are vulnerable to an assortment of diseases, being vaccinated is crucial to survival, especially in a third world country.
+
+## Weaknesses and Limitations
+
+An obvious weakness is the lack of information. The number of regions being examined is 10, which is not nearly enough to find an accurate relationship. One or two outliers could exist in this data set but due to the limited data, none can be removed. Given more regions, some outliers can be identified and a stronger relationship between mortality rate and vaccination rate can exist. A possible next step to correct for this weakness is to include neighboring countries with a similar data collection system.
+
+In order to reduce the mortality data collected and increase its relevance to the paper, mortality rates that include cause of death could be beneficial in order to identify the different causes for each death. If deaths caused by non-disease related incidents are removed, the data could very well show just how effective vaccines are at preventing disease-related mortalities. A possible next step is to view data collected by other means or to view data collected in other countries in hopes that there is a dataset which dives into more detail on mortality rates.
+
+## Conclusion
+
+While the collection of the data was thorough and made sure to include many and varied responses, the detail collected with regards to mortality leaves much to be desired. While revisiting the topic of vaccination efficacy seems irrelevant, given all the scientific proof behind their existence, it seems many have come to their own conclusions and believe their information outweighs science. By taking this paper as a first step and continuing onward to further this paper, by combining it with available data sets all over the internet, the general public will be able to better educate themselves and come to make better informed decisions.
+
+From basic data gathered in 1998, this paper was able to show that vaccines have an effect on lowering mortality rates. Since 1998, many new diseases have come to fruition and likewise, vaccines for these diseases have also been developed. Many traditional vaccines have also been updated to increase their efficacy, the most recent disease being COVID. Tracking new and different strains and combating each with a newer vaccine has taken place the past few months. Without these doctors and researchers, the outcome of this pandemic could have been much worse. In order to support hard working doctors who try their best to save humanity in the face of diseases through vaccines, we must convince ourselves of their efficacy by using the data available to us.
+
+\newpage
+
+# References
+
+
