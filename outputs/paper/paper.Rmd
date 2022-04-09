@@ -55,7 +55,7 @@ The data found in (cite here) comes from a survey that was conducted throughout 
 The data can be found on the DHS website in PDF format as mentioned previously. Below are the pdf versions of each table used followed by a replica of each table in full. \@ref(fig:pdfVac) and \@ref(tab:fullVac) are the pdf and replica of the table containing data on vaccinations in Ghana. \@ref(fig:pdfMort) and \@ref(tab:fullMort) are the pdf and replica of the table containing data on child mortality in Ghana
 
 ```{r pdfVac, warning=FALSE, echo=FALSE, fig.align="center", fig.cap="Vaccination Table in the DHS Report", out.width="60%"}
-include_graphics(here::here("outputs/vaccination_table.png"))
+include_graphics(here::here("inputs/data/vaccination_table.png"))
 ```
 
 ```{r fullVac, warning=FALSE, echo=FALSE}
@@ -70,7 +70,7 @@ kable_styling(latex_options = c("striped", "scale_down"))
 ```
 
 ```{r pdfMort, warning=FALSE, echo=FALSE, fig.align="center", fig.cap="Mortality Table in the DHS Report", out.width="60%"}
-include_graphics(here::here("outputs/mortality_table.png"))
+include_graphics(here::here("inputs/data/mortality_table.png"))
 ```
 
 ```{r fullMort, warning=FALSE, echo=FALSE}
