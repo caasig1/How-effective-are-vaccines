@@ -39,7 +39,7 @@ When it comes to health, many of nature's deadliest diseases have taken out hord
 
 This paper focuses on the relationship between vaccination rates and mortality rates in children in Ghana from 1998. In order to provide another perspective on the efficacy of vaccinations, this paper does not delve into the science behind vaccinations but rather looks at the numbers to see if there is any relationship between mortality rates and vaccination rates. In order to fully examine the relationship of these two rates, Ghana was selected since it is a third world country. When traveling to Ghana in 2022, many vaccines are recommended to travelers to cover 11 different diseases [@travel]. Being in such a country, those with weaker immune systems (especially children) are more likely to catch these diseases; not being vaccinated could lead to severe or deadly consequences.
 
-In the following sections, I first discuss the Data \@ref(data) used in this paper. I will start by discussing the various resources used in this paper. Then I discuss where the data was gathered from and how the data was collected. Closing the section, I will show the table portions of the pdf that were used alongside my recreations of them. In the following section, I discuss the Results \@ref(results) found from this data. I provide graphs including correlation between vaccination rates and certain mortality rates. I summarize those results from those graphs as well as those gathered directly from the tables. The Discussion \@ref(discussion) section concludes the paper, providing insight on any implications drawn from the data, what should be done in light of what is shown, and possible next steps to further the findings.
+In the following sections, I first discuss the Data \@ref(data) used in this paper. I will start by discussing the various resources used in this paper. Then I discuss where the data was gathered from and how the data was collected. Closing the section, I will show the table portions of the PDF that were used alongside my recreations of them. In the following section, I discuss the Results \@ref(results) found from this data. I provide graphs including correlation between vaccination rates and certain mortality rates. I summarize those results from those graphs as well as those gathered directly from the tables. The Discussion \@ref(discussion) section concludes the paper, providing insight on any implications drawn from the data, what should be done in light of what is shown, and possible next steps to further the findings.
 
 # Data
 
@@ -211,3 +211,5 @@ From basic data gathered in 1998, this paper was able to show that vaccines have
 \newpage
 
 # References
+
+
