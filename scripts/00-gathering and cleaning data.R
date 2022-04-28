@@ -1,7 +1,7 @@
 #### Preamble ####
 # Purpose: Clean the survey data downloaded from DHS Program
 # Author: Isaac Ng
-# Data: April 9 2022
+# Date: April 9 2022
 # Contact: isaac.ng@mail.utoronto.ca
 
 
